@@ -1,0 +1,420 @@
+Microsoft Windows [Version 10.0.26200.9445]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\Lenovo>cd C:\xampp\mysql\bin
+
+C:\xampp\mysql\bin>mysql -u root -p
+Enter password:
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 9
+Server version: 10.4.32-MariaDB mariadb.org binary distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> CREATE DATABASE db_parkir_mall;
+ERROR 1007 (HY000): Can't create database 'db_parkir_mall'; database exists
+MariaDB [(none)]> show databases;
++-------------------------+
+| Database                |
++-------------------------+
+| db_parkir_mall          |
+| db_pengukuran_kadar_air |
+| information_schema      |
+| mysql                   |
+| performance_schema      |
+| phpmyadmin              |
+| sekolah                 |
+| sekolah1                |
+| sekolah_pengaduan       |
++-------------------------+
+9 rows in set (0.043 sec)
+
+MariaDB [(none)]> CREATE DATABASE db_parkir_mall;
+ERROR 1007 (HY000): Can't create database 'db_parkir_mall'; database exists
+MariaDB [(none)]> USE db_parkir_mall;
+Database changed
+MariaDB [db_parkir_mall]> CREATE TABLE jenis_kendaraan (
+    -> id INT AUTO_INCREMENT PRIMARY KEY,
+    -> nama VARCHAR(30) NOT NULL,
+    -> tarif INT NOT NULL
+    -> );
+Query OK, 0 rows affected (0.023 sec)
+
+MariaDB [db_parkir_mall]> INSERT INTO jenis_kendaraan (nama, tarif) VALUES
+    -> ('Motor', 2000),
+    -> ('Mobil', 5000),
+    -> ('Truk', 8000);
+Query OK, 3 rows affected (0.040 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [db_parkir_mall]> SELECT * FROM jenis_kendaraan;
++----+-------+-------+
+| id | nama  | tarif |
++----+-------+-------+
+|  1 | Motor |  2000 |
+|  2 | Mobil |  5000 |
+|  3 | Truk  |  8000 |
++----+-------+-------+
+3 rows in set (0.004 sec)
+
+MariaDB [db_parkir_mall]> CREATE TABLE area_parkir (
+    -> id INT AUTO_INCREMENT PRIMARY KEY,
+    -> kode VARCHAR(10) NOT NULL,
+    -> nama VARCHAR(50) NOT NULL,
+    -> kapasitas INT NOT NULL
+    -> );
+Query OK, 0 rows affected (0.014 sec)
+
+MariaDB [db_parkir_mall]> INSERT INTO area_parkir (kode, nama, kapasitas) VALUES
+    -> ('A1', 'Parkir Motor', 100),
+    -> ('A2', 'Parkir Mobil', 50),
+    -> ('B1', 'Parkir Truk', 20);
+Query OK, 3 rows affected (0.007 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [db_parkir_mall]> SELECT * FROM area_parkir;
++----+------+--------------+-----------+
+| id | kode | nama         | kapasitas |
++----+------+--------------+-----------+
+|  1 | A1   | Parkir Motor |       100 |
+|  2 | A2   | Parkir Mobil |        50 |
+|  3 | B1   | Parkir Truk  |        20 |
++----+------+--------------+-----------+
+3 rows in set (0.000 sec)
+
+MariaDB [db_parkir_mall]> CREATE TABLE petugas (
+    -> id INT AUTO_INCREMENT PRIMARY KEY,
+    -> nama VARCHAR(50) NOT NULL
+    -> );
+Query OK, 0 rows affected (0.014 sec)
+
+MariaDB [db_parkir_mall]> INSERT INTO petugas (nama) VALUES
+    -> ('Dinda'),
+    -> ('Fitri'),
+    -> ('Tengku');
+Query OK, 3 rows affected (0.028 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [db_parkir_mall]> SELECT * FROM petugas;
++----+--------+
+| id | nama   |
++----+--------+
+|  1 | Dinda  |
+|  2 | Fitri  |
+|  3 | Tengku |
++----+--------+
+3 rows in set (0.000 sec)
+
+MariaDB [db_parkir_mall]> CREATE TABLE parkir (
+    -> id INT AUTO_INCREMENT PRIMARY KEY,
+    -> plat_nomor VARCHAR(15) NOT NULL,
+    -> jenis_id INT NOT NULL,
+    -> area_id INT NOT NULL,
+    -> petugas_id INT NOT NULL,
+    -> waktu_masuk DATETIME NOT NULL,
+    -> waktu_keluar DATETIME NULL,
+    -> FOREIGN KEY (jenis_id)
+    -> REFERENCES jenis_kendaraan(id),
+    -> FOREIGN KEY (area_id)
+    -> REFERENCES area_parkir(id),
+    -> FOREIGN KEY (petugas_id)
+    -> REFERENCES petugas(id)
+    -> );
+Query OK, 0 rows affected (0.032 sec)
+
+MariaDB [db_parkir_mall]> INSERT INTO parkir
+    -> (plat_nomor, jenis_id, area_id, petugas_id, waktu_masuk, waktu_keluar)
+    -> VALUES
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 3
+MariaDB [db_parkir_mall]> INSERT INTO parkir
+    -> (plat_nomor, jenis_id, area_id, petugas_id, waktu_masuk, waktu_keluar) VALUES
+    -> ('BK1234AA', 1, 1, 1, '2026-09-10 08:00:00', NULL),
+    -> ('BK5678BB', 2, 2, 2, '2026-09-10 08:15:00', NULL),
+    -> ('BK9012CC', 1, 1, 3, '2026-09-10 08:30:00', NULL),
+    -> ('BK3456DD', 2, 2, 1, '2026-09-10 09:00:00', '2026-09-10 12:00:00'),
+    -> ('BK7890EE', 3, 3, 2, '2026-09-10 09:30:00', NULL);
+Query OK, 5 rows affected (0.010 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [db_parkir_mall]> SELECT * FROM parkir;
++----+------------+----------+---------+------------+---------------------+---------------------+
+| id | plat_nomor | jenis_id | area_id | petugas_id | waktu_masuk         | waktu_keluar        |
++----+------------+----------+---------+------------+---------------------+---------------------+
+|  1 | BK1234AA   |        1 |       1 |          1 | 2026-09-10 08:00:00 | NULL                |
+|  2 | BK5678BB   |        2 |       2 |          2 | 2026-09-10 08:15:00 | NULL                |
+|  3 | BK9012CC   |        1 |       1 |          3 | 2026-09-10 08:30:00 | NULL                |
+|  4 | BK3456DD   |        2 |       2 |          1 | 2026-09-10 09:00:00 | 2026-09-10 12:00:00 |
+|  5 | BK7890EE   |        3 |       3 |          2 | 2026-09-10 09:30:00 | NULL                |
++----+------------+----------+---------+------------+---------------------+---------------------+
+5 rows in set (0.001 sec)
+
+MariaDB [db_parkir_mall]> DESC jenis_kendaraan;
++-------+-------------+------+-----+---------+----------------+
+| Field | Type        | Null | Key | Default | Extra          |
++-------+-------------+------+-----+---------+----------------+
+| id    | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nama  | varchar(30) | NO   |     | NULL    |                |
+| tarif | int(11)     | NO   |     | NULL    |                |
++-------+-------------+------+-----+---------+----------------+
+3 rows in set (0.024 sec)
+
+MariaDB [db_parkir_mall]> DESC area_parkir;
++-----------+-------------+------+-----+---------+----------------+
+| Field     | Type        | Null | Key | Default | Extra          |
++-----------+-------------+------+-----+---------+----------------+
+| id        | int(11)     | NO   | PRI | NULL    | auto_increment |
+| kode      | varchar(10) | NO   |     | NULL    |                |
+| nama      | varchar(50) | NO   |     | NULL    |                |
+| kapasitas | int(11)     | NO   |     | NULL    |                |
++-----------+-------------+------+-----+---------+----------------+
+4 rows in set (0.037 sec)
+
+MariaDB [db_parkir_mall]> DESC petugas;
++-------+-------------+------+-----+---------+----------------+
+| Field | Type        | Null | Key | Default | Extra          |
++-------+-------------+------+-----+---------+----------------+
+| id    | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nama  | varchar(50) | NO   |     | NULL    |                |
++-------+-------------+------+-----+---------+----------------+
+2 rows in set (0.014 sec)
+
+MariaDB [db_parkir_mall]> DESC parkir;
++--------------+-------------+------+-----+---------+----------------+
+| Field        | Type        | Null | Key | Default | Extra          |
++--------------+-------------+------+-----+---------+----------------+
+| id           | int(11)     | NO   | PRI | NULL    | auto_increment |
+| plat_nomor   | varchar(15) | NO   |     | NULL    |                |
+| jenis_id     | int(11)     | NO   | MUL | NULL    |                |
+| area_id      | int(11)     | NO   | MUL | NULL    |                |
+| petugas_id   | int(11)     | NO   | MUL | NULL    |                |
+| waktu_masuk  | datetime    | NO   |     | NULL    |                |
+| waktu_keluar | datetime    | YES  |     | NULL    |                |
++--------------+-------------+------+-----+---------+----------------+
+7 rows in set (0.016 sec)
+
+MariaDB [db_parkir_mall]> SHOW TABLES;
++--------------------------+
+| Tables_in_db_parkir_mall |
++--------------------------+
+| area_parkir              |
+| jenis_kendaraan          |
+| parkir                   |
+| petugas                  |
++--------------------------+
+4 rows in set (0.004 sec)
+
+MariaDB [db_parkir_mall]> jenis_kendaraan → parkir
+    -> jenis_kendaraan
+    -> ---------------
+    -> id PK
+    -> nama
+    -> tarif
+    ->    │
+    ->    │ 1 : N
+    ->    ▼
+    -> parkir
+    -> ---------------
+    -> id PK
+    -> plat_nomor
+    -> jenis_id FK
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'jenis_kendaraan ␦ parkir
+jenis_kendaraan
+-------------
+id PK
+nama
+tarif
+   ...' at line 1
+MariaDB [db_parkir_mall]> SELECT
+    -> parkir.id,
+    -> parkir.plat_nomor,
+    -> jenis_kendaraan.nama AS jenis_kendaraan,
+    -> jenis_kendaraan.tarif,
+    -> area_parkir.kode AS kode_area,
+    -> area_parkir.nama AS area,
+    -> petugas.nama AS petugas,
+    -> parkir.waktu_masuk,
+    -> parkir.waktu_keluar
+    -> FROM parkir
+    -> JOIN jenis_kendaraan
+    -> ON parkir.jenis_id = jenis_kendaraan.id
+    -> JOIN area_parkir
+    -> ON parkir.area_id = area_parkir.id
+    -> JOIN petugas
+    -> ON parkir.petugas_id = petugas.id;
++----+------------+-----------------+-------+-----------+--------------+---------+---------------------+---------------------+
+| id | plat_nomor | jenis_kendaraan | tarif | kode_area | area         | petugas | waktu_masuk         | waktu_keluar        |
++----+------------+-----------------+-------+-----------+--------------+---------+---------------------+---------------------+
+|  1 | BK1234AA   | Motor           |  2000 | A1        | Parkir Motor | Dinda   | 2026-09-10 08:00:00 | NULL                |
+|  2 | BK5678BB   | Mobil           |  5000 | A2        | Parkir Mobil | Fitri   | 2026-09-10 08:15:00 | NULL                |
+|  3 | BK9012CC   | Motor           |  2000 | A1        | Parkir Motor | Tengku  | 2026-09-10 08:30:00 | NULL                |
+|  4 | BK3456DD   | Mobil           |  5000 | A2        | Parkir Mobil | Dinda   | 2026-09-10 09:00:00 | 2026-09-10 12:00:00 |
+|  5 | BK7890EE   | Truk            |  8000 | B1        | Parkir Truk  | Fitri   | 2026-09-10 09:30:00 | NULL                |
++----+------------+-----------------+-------+-----------+--------------+---------+---------------------+---------------------+
+5 rows in set (0.013 sec)
+
+MariaDB [db_parkir_mall]> SELECT
+    -> parkir.plat_nomor,
+    -> jenis_kendaraan.nama AS kendaraan,
+    -> area_parkir.nama AS kendaraan,
+    -> parkir.waktu_masuk
+    -> FROM parkir
+    -> JOIN jenis _kendaraan
+    -> ON parkir.area_id = area_parkir.id
+    -> WHERE parkir.waktu_keluar IS NULL;
+ERROR 1146 (42S02): Table 'db_parkir_mall.jenis' doesn't exist
+MariaDB [db_parkir_mall]> SELECT
+    -> parkir.plat_nomor,
+    -> jenis_kendaraan.nama AS kendaraan,
+    -> area_parkir.nama AS area,
+    -> parkir.waktu_masuk
+    -> FROM parkir
+    -> JOIN jenis_kendaraan
+    -> ON parkir.jenis_id = jenis_kendaraan.id
+    -> JOIN area_parkir
+    -> ON parkir.area_id = area_parkir.id
+    -> WHERE parkir.waktu_keluar IS NULL;
++------------+-----------+--------------+---------------------+
+| plat_nomor | kendaraan | area         | waktu_masuk         |
++------------+-----------+--------------+---------------------+
+| BK1234AA   | Motor     | Parkir Motor | 2026-09-10 08:00:00 |
+| BK5678BB   | Mobil     | Parkir Mobil | 2026-09-10 08:15:00 |
+| BK9012CC   | Motor     | Parkir Motor | 2026-09-10 08:30:00 |
+| BK7890EE   | Truk      | Parkir Truk  | 2026-09-10 09:30:00 |
++------------+-----------+--------------+---------------------+
+4 rows in set (0.001 sec)
+
+MariaDB [db_parkir_mall]> SELECT
+    -> parkir.plat_nomor,
+    -> jenis_kendaraan.nama AS kendaraan,
+    -> area_parkir.nama AS area,
+    -> parkir.waktu_masuk,
+    -> parkir.waktu_keluar
+    -> FROM parkir
+    -> JOIN jenis_kendaraan
+    -> ON parkir.jenis_id = jenis_kendaraan.id
+    -> JOIN area_parkir
+    -> ON parkir.area_id = area_parkir.id
+    -> WHERE parkir.waktu_keluar IS NOT NULL;
++------------+-----------+--------------+---------------------+---------------------+
+| plat_nomor | kendaraan | area         | waktu_masuk         | waktu_keluar        |
++------------+-----------+--------------+---------------------+---------------------+
+| BK3456DD   | Mobil     | Parkir Mobil | 2026-09-10 09:00:00 | 2026-09-10 12:00:00 |
++------------+-----------+--------------+---------------------+---------------------+
+1 row in set (0.002 sec)
+
+MariaDB [db_parkir_mall]> SELECT * FROM parkir
+    -> WHERE plat_nomor = 'BK1234AA',;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 2
+MariaDB [db_parkir_mall]> SELECT * FROM parkir
+    -> WHERE plat_nomor = 'BK1234AA';
++----+------------+----------+---------+------------+---------------------+--------------+
+| id | plat_nomor | jenis_id | area_id | petugas_id | waktu_masuk         | waktu_keluar |
++----+------------+----------+---------+------------+---------------------+--------------+
+|  1 | BK1234AA   |        1 |       1 |          1 | 2026-09-10 08:00:00 | NULL         |
++----+------------+----------+---------+------------+---------------------+--------------+
+1 row in set (0.004 sec)
+
+MariaDB [db_parkir_mall]> SELECT
+    -> plat_nomor,
+    -> waktu_masuk,
+    -> waktu_keluar,
+    -> TIMESTAMPDIFF(
+    -> HOUR,
+    -> waktu_masuk,
+    -> waktu_keluar
+    -> ) AS lama_jam
+    -> FROM parkir
+    -> WHERE waktu_keluar IS NOT NULL;
++------------+---------------------+---------------------+----------+
+| plat_nomor | waktu_masuk         | waktu_keluar        | lama_jam |
++------------+---------------------+---------------------+----------+
+| BK3456DD   | 2026-09-10 09:00:00 | 2026-09-10 12:00:00 |        3 |
++------------+---------------------+---------------------+----------+
+1 row in set (0.005 sec)
+
+MariaDB [db_parkir_mall]> SELECT
+    -> parkir.plat_nomor,
+    -> jenis_kendaraan.nama AS kendaraan,
+    -> TIMESTAMPDIFF(
+    -> HOUR,
+    -> parkir.waktu_masuk,
+    -> parkir.waktu_keluar
+    -> ) AS lama_jam,
+    -> jenis_kendaraan.tarif,
+    -> GREATEST(
+    -> 1,
+    -> TIMESTAMPDIFF(
+    -> HOUR,
+    -> parkir.waktu_masuk,
+    -> parkir.waktu_keluar
+    -> )
+    -> ) * jenis_kendaraan.tarif AS total_bayar
+    -> FROM parkir
+    -> JOIN jenis_kendaraan
+    -> ON parkir.jenis_id = jenis_kendaraan.id
+    -> WHERE parkir.waktu_keluar IS NOT NULL;
++------------+-----------+----------+-------+-------------+
+| plat_nomor | kendaraan | lama_jam | tarif | total_bayar |
++------------+-----------+----------+-------+-------------+
+| BK3456DD   | Mobil     |        3 |  5000 |       15000 |
++------------+-----------+----------+-------+-------------+
+1 row in set (0.015 sec)
+
+MariaDB [db_parkir_mall]> SELECT
+    -> jenis_kendaraan.nama AS kendaraan,
+    -> COUNT(parkir.id) AS jumlah
+    -> FROM parkir
+    -> JOIN jenis_kendaraan
+    -> ON parkir.jenis_id = jenis_kendaraan.id
+    -> GROUP BY jenis_kendaraan.id, jenis_kendaraan.nama;
++-----------+--------+
+| kendaraan | jumlah |
++-----------+--------+
+| Motor     |      2 |
+| Mobil     |      2 |
+| Truk      |      1 |
++-----------+--------+
+3 rows in set (0.008 sec)
+
+MariaDB [db_parkir_mall]> SELECT
+    -> area_parkir.nama AS area,
+    -> COUNT(parkir.id) AS jumlah_kendaraan
+    -> FROM parkir
+    -> JOIN area_parkir
+    -> ON parkir.area_id = area_parkir.id
+    -> GROUP BY area_parkir.id, area_parkir.nama;
++--------------+------------------+
+| area         | jumlah_kendaraan |
++--------------+------------------+
+| Parkir Motor |                2 |
+| Parkir Mobil |                2 |
+| Parkir Truk  |                1 |
++--------------+------------------+
+3 rows in set (0.004 sec)
+
+MariaDB [db_parkir_mall]>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
